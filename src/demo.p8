@@ -1,4 +1,5 @@
 function _init()
+	g_alphabet=" abcdefghijklmnopqrstuvwxyz0123456789+-*/=<>,.!?'\"@#$%^&_~(){}[]"
 	g_loc=0
 	g_anim_off=0
 	g_anim_spd=0
@@ -10,6 +11,14 @@ function _init()
 		[3]=1, [4]=1, [5]=0,
 		[6]=0, [7]=1, [8]=1
 	}
+
+	g_initial_state, g_final_states, g_trans = load_program(dup_prog)
+	printh("initial: "..g_initial_state)
+	for i=1,#g_final_states do
+		printh(g_final_states[i])
+		--printh("cur: "..trans[i].cur.." read: "..trans[i].read)
+	end
+
 
 	g_input_stack = {}
 end
@@ -23,7 +32,8 @@ function _update60()
 		add(g_input_stack, 0)
 	end
 
-	update_tape(g_tape, g_input_stack, "h")
+	-- valid symbols
+	update_tape(g_tape, g_input_stack, "a")
 end
 
 function update_tape(t, tin, symbol)
@@ -31,12 +41,11 @@ function update_tape(t, tin, symbol)
 	if g_anim_spd == 0 and #tin > 0 then
 		g_anim_spd = tin[1]*2
 		del(tin, tin[1]) -- to delete at the index, fine if non-existent.
+
+		-- write symbol
 		if symbol != nil then
 			t[g_loc] = symbol
 		end
-		flash=true
-	else
-		flash=false
 	end
 
 	-- animation handling
@@ -84,7 +93,6 @@ function _draw()
 		print(g_input_stack[i], 0, 8*i, 6)
 	end
 
-	if flash then
-		print("HAHAHA", 64, 64, 7)
-	end
+	print(g_alphabet, -130, 64, 7)
+	print(#g_alphabet, 0, 90, 7)
 end
