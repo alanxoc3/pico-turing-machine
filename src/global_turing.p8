@@ -76,21 +76,29 @@ function tape_to_string()
 	return text
 end
 
-function update_tape_anim(t)
+function update_tape_anim()
 	-- input handling
-	if g_anim_spd == 0 then
-		g_anim_spd = g_input
+	if g_anim_timer <= 0 then
+		-- g_anim_spd == 0
+		g_anim_spd = g_input * (c_dim / (g_cell_pause / 2))
 		g_input = 0
+		g_anim_timer = g_cell_pause
 	end
 
 	-- animation handling
-	g_anim_off += g_head_spd*g_anim_spd
-	if g_anim_off > c_dim or g_anim_off < -c_dim then
+	g_anim_off += g_anim_spd
+	if g_anim_off > c_dim then
 		g_anim_off = 0
-		g_loc += g_anim_spd
+		g_loc += 1
+		g_anim_spd = 0
+	end
+	if g_anim_off < -c_dim then
+		g_anim_off = 0
+		g_loc -= 1
 		g_anim_spd = 0
 	end
 
-	return g_anim_spd == 0
-end
+	g_anim_timer -= 1
 
+	return g_anim_timer <= 0
+end
