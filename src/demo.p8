@@ -8,7 +8,8 @@ c_space = "_"
 -- no underscore
 c_alphabet=" abcdefghijklmnopqrstuvwxyz0123456789+-*/=<>,.!?'\"@#$%^&~(){}[]"
 c_dim=16
-g_cell_pause=60
+c_pause_min=2
+c_pause_max=60
 
 function _init()
 	reset_turing()
@@ -20,11 +21,12 @@ function reset_turing()
 	g_loc=1
 	g_head_spd=1
 	g_anim_spd=0
-	g_anim_timer=60
+	g_cell_pause=31
+	g_anim_timer=g_cell_pause
 	g_input = 0
 	g_can_step=true
 	g_is_complete = false
-	g_pause_speed = 0
+	g_paused = false
 	g_prog_name = ""
 
 	load_turing(dup_prog)
@@ -45,33 +47,10 @@ function _update60()
 		if g_can_step then g_is_complete = update_turing() end
 	end
 
+	update_input()
+
 	g_can_step = update_tape_anim()
 
-	if g_pause_speed == 0 then
-		if btn(2) then
-			g_cell_pause = max(g_cell_pause-2, 2)
-		end
-
-		if btn(3) then
-			g_cell_pause = min(g_cell_pause+2, 60)
-		end
-	end
-
-	-- reset
-	if btnp(4) then
-		reset_turing()
-	end
-
-	-- pause
-	if btnp(5) then
-		if g_pause_speed == 0 then
-			g_pause_speed = g_anim_timer
-			g_head_spd = 0
-		else
-			g_head_spd = g_pause_speed
-			g_pause_speed = 0
-		end
-	end
 end
 
 function _draw()
@@ -79,18 +58,27 @@ function _draw()
 	off=43
 	print("turing machine v.0.1", 1, 1, 7)
 	print("up = faster, dwn = slower", 1, 7, 6)
-	print("z  = reset,  x   = stop", 1, 13, 6)
+	print("z  = reset,  x   = stop/play", 1, 13, 6)
 	draw_tape(c_dim, g_loc, g_tape, off, g_anim_off, 0)
 	draw_head(off)
 
-	if g_is_complete then
-		print(g_is_complete, 1, 60, 8)
+	print("prog: "..g_prog_name, 1, 23, 12)
+	local text = g_is_complete
+	if not text then
+		text = "working "
+
+		if not g_paused then
+			local spd = 100 - flr(100 * (g_cell_pause-c_pause_min) / (c_pause_max - c_pause_min))
+			text = text..spd.."% speedup"
+		else
+			text = text.."paused"
+		end
 	end
+
+	print(text, 1, 29, 13)
+
 	print("state: "..g_state, 1, 66, 7)
 	rect(0, 72, 127, 72, 6)
 	print("results:", 1, 74, 7)
 	print(tape_to_string(), 1, 80, 6)
-	print(g_anim_timer,100,100, 7)
-	print(g_anim_off,100,110, 7)
-
 end

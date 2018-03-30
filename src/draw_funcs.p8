@@ -2,7 +2,7 @@ function draw_tape(dim, ind_on, tape, vert_off, anim_off, timer)
 	hor_off = -1 - anim_off
 	-- -2 is flr(5/2) is the text height
 	text_off = vert_off - 2
-	text_col, rect_col, bkgd_col = 4, 2, 15
+	text_col, rect_col, bkgd_col = 5, 1, 6
 	
 	rectfill(0, vert_off-dim/2, 127, vert_off + dim/2, bkgd_col)
 

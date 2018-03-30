@@ -76,7 +76,34 @@ function tape_to_string()
 	return text
 end
 
+function update_input()
+	if not g_paused then
+		if btn(2) then
+			g_cell_pause = max(g_cell_pause-2, c_pause_min)
+		end
+
+		if btn(3) then
+			g_cell_pause = min(g_cell_pause+2, c_pause_max)
+		end
+	end
+
+	-- reset
+	if btnp(4) then
+		reset_turing()
+	end
+
+	-- pause
+	if btnp(5) then
+		g_paused = not g_paused
+	end
+
+	-- pause on completion!
+	g_paused = g_paused or g_is_complete
+end
+
 function update_tape_anim()
+	if g_paused then return false end
+
 	-- input handling
 	if g_anim_timer <= 0 then
 		-- g_anim_spd == 0
