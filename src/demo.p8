@@ -1,3 +1,6 @@
+-- see source code at:
+-- github.com/alanxoc3/pico-turing-machine
+
 c_space = "_"
 
 -- no underscore
