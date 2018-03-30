@@ -4,6 +4,7 @@ function load_program(prog_str)
 
 	prog_str = prog_str.."\n"
 	-- control vars
+	local reading_title = true
 	local reading_header = true
 	local read_state = true
 	local trans_loc = 1
@@ -18,11 +19,18 @@ function load_program(prog_str)
 	-- storage vars
 	local trans = {}
 	local final_states = {}
+	local title=""
 
 	for i=1,#prog_str do
 		local let = sub(prog_str, i, i)
 
-		if reading_header then
+		if reading_title then
+			if let == "\n" then
+				reading_title = false
+			else
+				title=title..let
+			end
+		elseif reading_header then
 			if let == "," then
 				read_state = true
 			elseif let == "\n" then
@@ -66,5 +74,5 @@ function load_program(prog_str)
 		del(final_states,final_states[1])
 	end
 
-	return initial_state, final_states, trans
+	return title, initial_state, final_states, trans
 end
